@@ -1,1 +1,49 @@
-<p>board works!</p>
+<div class="grid-container">
+  <nav>
+    <div class="heading">
+      Pathfinder
+    </div>
+    <app-action [actions]="actions" (taken)="actionTakenHandler($event)"> </app-action>
+  </nav>
+  <div class="info">
+    <div class="detail">
+      <div class="node isStartNode"></div>
+      <div class="text">Starting Point(drag to change)</div>
+    </div>
+    <div class="detail">
+      <div class="node isEndNode"></div>
+      <div class="text">Ending Point (drag to change)</div>
+    </div>
+    <div class="detail">
+      <div class="node isWall"></div>
+      <div class="text">Creates a Wall (click and drag on cells)</div>
+    </div>
+    <div class="detail">
+      <div class="node isVisited"></div>
+      <div class="text">Discovered Nodes</div>
+    </div>
+    <div class="detail">
+      <div class="node inPath"></div>
+      <div class="text">Shortest Path</div>
+    </div>
+  </div>
+
+  <div class="wrapper" (mousedown)="mouseDown($event)" (mouseup)="mouseUp($event)">
+    <div *ngFor="let r of [].constructor(rows); let rn = index" class="row">
+      <div *ngFor="let c of [].constructor(cols); let cn = index" class="col">
+        <app-node #node [node]="nodes[rn][cn]" (dropped)="drop($event)"></app-node>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a
+      class="github-button"
+      href="https://github.com/rdrahul/graphvisualizer"
+      data-size="large"
+      aria-label="Star rdrahul/graphvisualizer on GitHub"
+    >
+      Star
+    </a>
+  </div>
+</div>

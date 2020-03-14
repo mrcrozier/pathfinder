@@ -1,1 +1,21 @@
-<p>node works!</p>
+<div
+  class="node"
+  [ngClass]="{
+    isVisited: node.isVisited,
+    isWall: node.isWall,
+    isEndNode: node.isEndNode,
+    inPath: node.inPath,
+    isStartNode: node.isStartNode
+  }"
+  (mouseover)="createWall()"
+  (mousedown)="mouseDown($event)"
+  (mouseup)="mouseUp($event)"
+  #nodeStatic
+  draggable="{{ node.isStartNode || node.isEndNode ? true : false }}"
+  (dragstart)="dragStart($event)"
+  dropzone="copy"
+  (drop)="mouseUp($event)"
+  (dragenter)="dragCancel($event)"
+  (dragleave)="dragCancel($event)"
+  (dragover)="dragCancel($event)"
+></div>

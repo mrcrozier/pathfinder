@@ -4,19 +4,13 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { BoardComponent } from './board/board.component';
 import { NodeComponent } from './node/node.component';
-import { WeightedSearchAlgorithmComponent } from './algorithms/weighted-search-algorithm/weighted-search-algorithm.component';
+import { ActionComponent } from './action/action.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    BoardComponent,
-    NodeComponent,
-    WeightedSearchAlgorithmComponent
-  ],
-  imports: [
-    BrowserModule
-  ],
+  declarations: [AppComponent, BoardComponent, NodeComponent, ActionComponent],
+  imports: [BrowserModule, DragDropModule],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
