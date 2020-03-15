@@ -40,6 +40,13 @@ export default class Node {
     return false;
   }
 
+  equals(otherNode: Node): boolean {
+    if (this.row == otherNode.row && this.col == otherNode.col) {
+      return true;
+    }
+    return false;
+  }
+
   markAsVisited() {
     this.isVisited = true;
   }

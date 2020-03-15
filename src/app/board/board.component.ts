@@ -12,8 +12,8 @@ import Djikstras from '../algos/Djikstras';
   styleUrls: ['./board.component.scss'],
 })
 export class BoardComponent implements OnInit {
-  rows = 25;
-  cols = 50;
+  rows = 50;
+  cols = 100;
   isClicked = false;
 
   actions: Array<UserAction> = [
@@ -70,33 +70,49 @@ export class BoardComponent implements OnInit {
       this.myComponents.forEach((cmp: NodeComponent) => {
         if (cmp.node == visitedNodes[i]) {
           setTimeout(() => {
-            cmp.runChangeDetector();
             if (cmp.node.isEndNode) {
-              console.log('end node detected');
+              this.updateShortestPath(visitedNodes);
             }
+            cmp.runChangeDetector();
           }, 5 * i);
         }
       });
     }
+  }
 
+  updateShortestPath(visitedNodes: Node[]) {
+    // visitedNodes.reverse();
     let lastNode = visitedNodes[visitedNodes.length - 1];
+    let delay = 0;
     while (lastNode != null) {
       lastNode.inPath = true;
+      this.myComponents.find((n, index) => {
+        if (lastNode.equals(n.node)) {
+          this.updateIndividualNode(n, delay);
+          delay++;
+          return true;
+        }
+        return false;
+      });
       lastNode = lastNode.previousNode;
     }
+    // setTimeout(() => {
+    //   let i = 0;
+    //   this.myComponents.forEach((cmp: NodeComponent) => {
+    //     // console.log(cmp);
+    //     setTimeout(() => {
+    //       cmp.runChangeDetector();
+    //     }, 5 * i);
+    //     i += 1;
+    //   });
+    // });
+  }
 
-    const totalTime = 5 * (visitedNodes.length - 1);
-
-    // update the nodes to reflect the shortest path
+  updateIndividualNode(node: NodeComponent, delay: number) {
+    console.log('in update individual');
     setTimeout(() => {
-      let i = 0;
-      this.myComponents.forEach((cmp: NodeComponent) => {
-        setTimeout(() => {
-          cmp.runChangeDetector();
-        }, i * 2);
-        i += 1;
-      });
-    }, totalTime);
+      node.runChangeDetector();
+    }, 50 * delay);
   }
 
   /**
