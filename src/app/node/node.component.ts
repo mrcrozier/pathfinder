@@ -26,6 +26,7 @@ export class NodeComponent implements OnInit {
 
   isStartNode = false;
   isEndNode = false;
+  mouseClickedOnNode = false;
 
   constructor(private ref: ChangeDetectorRef, private messageService: MessageService) {}
 
@@ -48,6 +49,7 @@ export class NodeComponent implements OnInit {
   }
 
   mouseUp(event: Event) {
+    this.mouseClickedOnNode = false;
     console.log(event);
     try {
       const data = (event as any).dataTransfer.getData('text');
@@ -62,28 +64,52 @@ export class NodeComponent implements OnInit {
   }
 
   mouseDown(event: Event) {
-    if (this.node.isStartNode || this.node.isEndNode) {
-      this.messageService.mouseRelease();
-      // event.preventDefault();
-      event.stopPropagation();
+    // if (this.node.isStartNode || this.node.isEndNode) {
+    //   console.log('node mouse down');
+    //   this.messageService.mouseRelease();
+    //   this.mouseClickedOnNode = true;
+    //   // event.preventDefault();
+    //   event.stopPropagation();
 
-      return;
-    }
-    this.node.isWall = !this.node.isWall;
+    //   return;
+    // }
+    // this.node.isWall = !this.node.isWall;
+    this.messageService.updateCurrentNode(this.node, 'mouseDown');
   }
 
   createWall() {
-    console.log('inside', this.isClicked);
-    if (this.messageService.getMouseClicked() && !this.node.isEndNode && !this.node.isStartNode) {
+    console.log('createWall');
+    if (
+      this.messageService.getMouseClicked() &&
+      !this.node.isEndNode &&
+      !this.node.isStartNode &&
+      !this.mouseClickedOnNode
+    ) {
+      this.messageService.updateCurrentNode(this.node, 'createWall');
       this.node.isWall = !this.node.isWall;
     }
   }
 
   dragCancel(event: Event) {
+    console.log('dragCancel');
+    if (this.node.isEndNode) {
+      this.messageService.isEndNodeClicked = false;
+    }
     event.preventDefault();
   }
 
+  dragOver(event: Event) {
+    // event.preventDefault();
+    // console.log('dragOver');
+    // console.log(this.node);
+    this.messageService.updateCurrentNode(this.node, 'dragOver');
+  }
+
   dragStart(event) {
+    console.log('drag start');
+    if (this.node.isEndNode) {
+      this.messageService.isEndNodeClicked = true;
+    }
     event.dataTransfer.setData('text/plain', JSON.stringify(this.node));
     event.data = this.node;
   }

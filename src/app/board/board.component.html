@@ -31,7 +31,9 @@
   <div class="wrapper" (mousedown)="mouseDown($event)" (mouseup)="mouseUp($event)">
     <div *ngFor="let r of [].constructor(rows); let rn = index" class="row">
       <div *ngFor="let c of [].constructor(cols); let cn = index" class="col">
-        <app-node #node [node]="nodes[rn][cn]" (dropped)="drop($event)"></app-node>
+        <div (mouseover)="mouseOver($event, rn, cn)" (dragover)="dragOver(rn, cn)">
+          <app-node #node [node]="nodes[rn][cn]" (dropped)="drop($event)"></app-node>
+        </div>
       </div>
     </div>
   </div>

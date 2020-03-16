@@ -51,6 +51,10 @@ export default class Node {
     this.isVisited = true;
   }
 
+  toPoint(): Point {
+    return { row: this.row, col: this.col };
+  }
+
   reset() {
     this.isVisited = false;
     this.previousNode = false;

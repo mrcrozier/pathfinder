@@ -15,6 +15,7 @@ export class BoardComponent implements OnInit {
   rows = 50;
   cols = 100;
   isClicked = false;
+  algorithmRunning = false;
 
   actions: Array<UserAction> = [
     {
@@ -32,6 +33,7 @@ export class BoardComponent implements OnInit {
   ];
 
   nodes: Array<Array<Node>> = [];
+  currentNode: Node;
   startNode: Point = { row: 10, col: 14 };
   endNode: Point = { row: 8, col: 44 };
 
@@ -42,7 +44,20 @@ export class BoardComponent implements OnInit {
     this.initializeStartEndNodes();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.messageService.currentNode.subscribe(curNode => {
+      this.currentNode = curNode;
+      console.log(curNode);
+    });
+  }
+
+  runAlgorithm(startPoint: Point, endPoint: Point): Node[] {
+    // initialize the algorithm
+    const dj = new Djikstras();
+
+    // run algorithm and get visited nodes
+    return dj.start(this.nodes, startPoint, endPoint);
+  }
 
   /**
    * CORE Of the component
@@ -57,13 +72,8 @@ export class BoardComponent implements OnInit {
    * timeout to animate this also.
    */
   start() {
-    // this.RunChangeDetector();
-
-    // initialize the algorithm
-    const dj = new Djikstras();
-
-    // run algorithm and get visited nodes
-    const visitedNodes = dj.start(this.nodes, this.startNode, this.endNode);
+    this.algorithmRunning = true;
+    const visitedNodes = this.runAlgorithm(this.startNode, this.endNode);
 
     // run change detection to create animated effect
     for (let i = 0; i < visitedNodes.length; i++) {
@@ -96,6 +106,7 @@ export class BoardComponent implements OnInit {
       });
       lastNode = lastNode.previousNode;
     }
+    this.algorithmRunning = false;
     // setTimeout(() => {
     //   let i = 0;
     //   this.myComponents.forEach((cmp: NodeComponent) => {
@@ -187,9 +198,43 @@ export class BoardComponent implements OnInit {
   }
 
   mouseDown(event: Event) {
+    if (
+      this.currentNode.isStartNode ||
+      (this.currentNode.isEndNode &&
+        this.messageService.nodeAction == 'mouseDown' &&
+        !this.algorithmRunning)
+    ) {
+      console.log('node mouse down');
+      this.messageService.mouseRelease();
+      // this.mouseClickedOnNode = true;
+      // event.preventDefault();
+      event.stopPropagation();
+
+      return;
+    }
+    this.currentNode.isWall = !this.currentNode.isWall;
     this.messageService.mouseClicked();
     event.preventDefault();
     event.stopPropagation();
+  }
+
+  mouseOver(event: Event, rn, cn) {
+    console.log('in board mouseOver');
+    if (
+      this.messageService.getMouseClicked() &&
+      this.messageService.getEndNodeClicked() &&
+      !this.algorithmRunning
+    ) {
+      this.endNode = this.nodes[rn][cn];
+      console.log('updating end node');
+    }
+  }
+
+  dragOver(rn, cn) {
+    if (this.messageService.getEndNodeClicked && !this.algorithmRunning) {
+      this.endNode = this.nodes[rn][cn];
+      console.log('dragover updating end node');
+    }
   }
 
   drop(event) {
