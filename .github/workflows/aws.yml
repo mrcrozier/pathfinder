@@ -29,7 +29,7 @@
 
 name: Deploy to Amazon ECS
 
-on: [push]
+on: push
   
   jobs:
     deploy:
