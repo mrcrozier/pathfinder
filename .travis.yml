@@ -1,0 +1,33 @@
+language: node_js
+
+node_js:
+  - 12.16.1
+
+cache:
+  directories:
+    - node_modules
+
+branches:
+  only:
+    - staging
+    - master
+
+before_script:
+  - npm install
+
+script:
+  - if [[ "$TRAVIS_BRANCH" = "master" || "$TRAVIS_BRANCH" = "staging" ]]; then npm run build; else echo "not a build branch"; fi
+
+deploy:
+  - provider: elasticbeanstalk
+    access_key_id: ${AWS_ACCESS_KEY_ID}
+    secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+    region: 'us-east-2'
+    app: 'pathfinder'
+    env: 'Pathfinder-env'
+    bucket_name: 'elasticbeanstalk-us-east-2-415353101291'
+    on:
+      branch: master
+
+after_deploy:
+  - echo "Applcation Deployed!"
